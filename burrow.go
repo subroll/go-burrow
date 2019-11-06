@@ -28,11 +28,12 @@ func WithHTTPClient(httpClient *http.Client) Option {
 
 // Client is the interface that should be implemented by client struct
 type Client interface {
+	Ping(ctx context.Context) error
 	Clusters(ctx context.Context) ([]string, error)
-	//	Consumers(ctx context.Context, cluster string) ([]string, error)
-	//	Topics(ctx context.Context, cluster string) ([]string, error)
-	//
-	//	Cluster(ctx context.Context, name string) (Cluster, error)
+	Consumers(ctx context.Context, cluster string) ([]string, error)
+	Topics(ctx context.Context, cluster string) ([]string, error)
+
+	Cluster(ctx context.Context, name string) (Cluster, error)
 }
 
 type baseResponse struct {
@@ -42,23 +43,17 @@ type baseResponse struct {
 		URI  string `json:"uri"`
 		Host string `json:"host"`
 	} `json:"request"`
-
-	//	Clusters  []string `json:"clusters"`
-	//	Consumers []string `json:"consumers"`
-	//	Topics    []string `json:"topics"`
-	//
-	//	Module Cluster `json:"module"`
 }
 
 // Cluster is the structure for cluster detail
-// type Cluster struct {
-// 	ClassName     string `json:"class-name"`
-// 	ClientProfile struct {
-// 		ClientID     string `json:"client-id"`
-// 		KafkaVersion string `json:"kafka-version"`
-// 		Name         string `json:"name"`
-// 	} `json:"client-profile"`
-// 	OffsetRefresh int      `json:"offset-refresh"`
-// 	Servers       []string `json:"servers"`
-// 	TopicRefresh  int      `json:"topic-refresh"`
-// }
+type Cluster struct {
+	ClassName     string `json:"class-name"`
+	ClientProfile struct {
+		ClientID     string `json:"client-id"`
+		KafkaVersion string `json:"kafka-version"`
+		Name         string `json:"name"`
+	} `json:"client-profile"`
+	OffsetRefresh int      `json:"offset-refresh"`
+	Servers       []string `json:"servers"`
+	TopicRefresh  int      `json:"topic-refresh"`
+}
