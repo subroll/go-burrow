@@ -1,0 +1,20 @@
+name: go burrow
+on:
+  pull_request:
+    branches:
+    - master
+
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Running linter on container
+      run: |
+        docker run \
+        -v ${{github.workspace}}:/app -w /app golangci/golangci-lint:v1.21.0 golangci-lint run -v
+
