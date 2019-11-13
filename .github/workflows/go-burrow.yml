@@ -1,19 +1,27 @@
-name: go burrow
+name: go-burrow
 on:
   pull_request:
     branches:
     - master
-
   push:
     branches:
     - master
-
 jobs:
   build:
+    strategy:
+    matrix:
+      go: [1.12.x, 1.13.x]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Running linter on container
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Install go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+    - name: Run test
+      run: go test ./...
+    - name: Run linter on container
       run: |
         docker run \
         -v ${{github.workspace}}:/app -w /app golangci/golangci-lint:v1.21.0 golangci-lint run -v
